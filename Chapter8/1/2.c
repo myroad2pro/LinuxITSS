@@ -10,17 +10,17 @@
 
 int main()
 {
+    int i;
     int shmsize;
     int shmid;
     key_t keyval;
     char *ptr;
     char *head;
 
-    // generate key for shmget using id of file and last 8 bits of PROJ_CHAR
     keyval = ftok(KEYFILE_PATH, (int)PROJ_CHAR);
     shmsize = SHIMSIZE;
 
-    //Get the shared memory ID, 0660 = -rw-rw---- = allow user and group to read and write but not execute
+    //Get the shared memory ID
     if ((shmid = shmget(keyval, shmsize, IPC_CREAT | 0660)) == -1)
     {
         perror("shmget");
@@ -39,14 +39,28 @@ int main()
 
     printf("Address of shared memory: %p\n", ptr);
 
-    //Output information of the shared memory
+    //Write to the shared memory
+    char c;
     while (1)
     {
-        if (*ptr == 'q')
+        c = getchar();
+        *ptr = c;
+        if (*ptr++ == 'q')
             break;
-        if (*ptr != 0)
-            putchar(*ptr++);
     }
 
+    //Detach the shared memory
+    if (shmdt((void *)head) == -1)
+    {
+        perror("shmdt");
+        exit(1);
+    }
+
+    //Delete the shared memory
+    if (shmctl(shmid, IPC_RMID, 0) == -1)
+    {
+        perror("shmctl");
+        exit(1);
+    }
     return 0;
 }
