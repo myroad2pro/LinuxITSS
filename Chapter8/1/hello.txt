@@ -1,0 +1,4 @@
+Bộ nhớ dùng chung là một khu vực (phân đoạn) bộ nhớ sẽ được chia sẻ bởi nhiều hơn một tiến trình. 
+Đây là hình thức nhanh nhất của IPC, bởi vì không có trung gian (nghĩa là một đường ống, hàng đợi tin nhắn, v.v.). 
+Thay vào đó, thông tin được ánh xạ trực tiếp từ một đoạn bộ nhớ và vào không gian địa chỉ của quá trình gọi. 
+Một phân đoạn có thể được tạo bởi một tiến trình và sau đó được viết và đọc từ bất kỳ số lượng tiến trình nào.
