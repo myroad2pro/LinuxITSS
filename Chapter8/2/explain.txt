@@ -1,0 +1,24 @@
+File descriptor đại diện cho một luồng đọc/ghi tới một file. nó được đánh định danh trong bảng file descriptor của hđh.
+mặc định 0 là stdin, 1 là stdout, 2 là stderr.
+close(int fd) sẽ xóa 1 file descriptor khỏi bảng định danh luồng của hệ điều hành.
+dup(int fd) sẽ sao chép một file descriptor có định danh fd vào ô có chỉ số thấp nhất trên bảng file descriptor.  
+
+Example 1:
+- pipe là kênh dữ liệu đa hướng có thể sử dụng để các tiến trình trao đổi thông tin với nhau.
+- pipe(int pipefd[2]) tao ra 1 pipe và truyền 2 file descriptor đọc và ghi vào pipefd[0] và pipefd[1]. 
+- dữ liệu trên đầu ghi của pipe được giữ trên buffer cho đến khi nó được đọc.
+- parent tao child process bang fork()
+- vì parent chỉ đọc, child chỉ ghi nên parent đóng hướng ghi tới pipe, child đóng hướng đọc từ pipe.
+- child ghi dữ liệu vào một string và truyền string đấy vào đầu ghi của pipe.
+- parent đọc dữ liệu từ pipe và ghi ra stdout.
+- kết thúc chương trình thì child đóng luồng ghi, parent đóng luồng đọc.
+
+Example 2:
+- tiến trình con xóa stdout khỏi bảng fd, và sao chép fd của luồng ghi vào vị trí đó.
+- sau khi đóng fd của luồng đọc và ghi có fd là phần tử của pipe_c2p[] thì fd tới luồng ghi của child vẫn còn nên nó vẫn có thể ghi ra pipe.
+- execlp("ls", "ls", "-l", NULL) sẽ thực hiện lệnh và ghi ra luồng có định danh của stdout, trong trường hợp này, do luồng tới stdout đã bị loại khỏi
+bảng fd và thay bằng luồng ghi tới pipe nên nó sẽ ghi kết quả thực hiện lệnh ra pipe.
+
+- tiến trình cha xóa stdin khỏi bảng fd và sao chép fd của luồng đọc vào vị trí đó.
+- sau khi đóng fd của luồng đọc ghi tới pipe thì luồng đọc từ pipe vẫn còn.
+- execlp("wc", "wc", "-l", NULL); thực hiện lệnh đọc từ stdin, trong trường hợp này là đọc từ luồng đọc của pipe do fd tới stdin đã bị thay thế.
