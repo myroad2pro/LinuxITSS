@@ -1,0 +1,4 @@
+Semaphore là một cách để các tiến trình sử dụng chung tài nguyên hệ thống.
+Khi một tiến trình yêu cầu tài nguyên thì giá trị Semaphore giảm đi,
+Khi một tiến trình giải phóng tài nguyên thì giá trị Semaphore tăng lên.
+Khi semaphore < 0 thì tiến trình được đưa vào trạng thái chờ, khi nào semaphore >= 0 thì nó thoát khỏi trạng thái chờ. 
